@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Carte de profil</title>
+
+        <style>
+            body{
+                margin: 0;
+                font-family: Arial, Helvetica, sans-serif;
+                background-color: #f2f2f2;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                min-height: 100vh;
+                padding: 24px;
+            }
+            .card{
+                width: 360px;
+                background: white;
+                border-radius: 14px;
+                padding: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.10);
+            }
+            .header{
+                display: flex;
+                gap: 14px;
+                align-items: center;
+            }
+            .avatar{
+                width: 64px;
+                height: 64px;
+                border-radius: 999px;
+                background: #ddd;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-weight: bold;
+                font-size: 18px;
+                user-select: none;
+            }
+            .title h1{
+                font-size: 18px;
+                margin: 0;
+            }
+            .title p{
+                margin: 4px 0 0 0;
+                opacity: 0.75;
+                font-size: 14px;
+            }
+            .actions{
+                margin-top: 16px;
+                display: flex;
+                gap: 10px;
+            }
+            button{
+                border: none;
+                border-radius: 10px;
+                padding: 10px 12px;
+                cursor: pointer;
+                font-weight: 600;
+            }
+            .primary{
+                background: #2d6cdf;
+                color: white;
+                flex: 1;
+            }
+            .ghost{
+                background: #e9e9e9;
+                flex: 1;
+            }
+            .more{
+                margin-top: 14px;
+                background: #f7f7f7;
+                border-radius: 12px;
+                padding: 12px;
+                overflow: hidden;
+
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                opacity: 0;
+
+                transition: max-height 250ms ease, opacity 250ms ease, padding 250ms ease;
+            }
+            .more.open{
+                max-height: 200px;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                opacity: 1;
+            }
+            .more p{
+                margin: 0 0 10px 0;
+                font-size: 14px;
+                line-height: 1.4;
+            }
+            .links{
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+            .chip{
+                display: inline-block;
+                background: white;
+                border-radius: 999px;
+                padding: 6px 10px;
+                font-size: 13px;
+                text-decoration: none;
+                color: #333;
+                border: 1px solid #e1e1e1;
+            }
+            .toast.show{
+                opacity: 1;
+                transform: translateX(-50%) translateY(-6px);
+            }
+            .toast{
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: #333;
+                color: white;
+                padding: 10px 14px;
+                border-radius: 999px;
+                font-size: 14px;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 200ms ease, transform 200ms ease;
+            }
+            .edit{
+                margin-top: 14px;
+                background: #f7f7f7;
+                border-radius: 12px;
+                padding: 12px;
+                display: none; /* caché par défaut */
+                text-align: left;
+            }
+            .edit.open{
+                display: block;
+            }
+            .edit label{
+                display: block;
+                font-size: 13px;
+                margin-bottom: 10px;
+                opacity: 0.9;
+            }
+            .edit input,
+            .edit textarea{
+                width: 100%;
+                box-sizing: border-box;
+                margin-top: 6px;
+                padding: 10px;
+                border-radius: 10px;
+                border: 1px solid #ddd;
+                font-family: inherit;
+                font-size: 14px;
+            }
+            .edit textarea{
+                resize: vertical;
+            }
+            .edit-actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 10px;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="card" id="card">
+            <div class="header">
+                <div class="avatar" id="avatar">PVL</div>
+
+                <div class="title">
+                    <h1 id="name">Paul VAN'T LAND</h1>
+                    <p id="role">Apprenti front-end</p>
+                </div>
+            </div>
+
+            <div class="actions">
+                <button class="primary" id="toggleBtn">Voir plus</button>
+                <button class="ghost" id="editBtn">Éditer profil</button>
+            </div>
+
+            <div class="edit" id="editSection">
+                <label>
+                    Prénom
+                    <input id="editFirstName" type="text"/>
+                </label>
+
+                <label>
+                    Nom
+                    <input id="editLastName" type="text"/>
+                </label>
+
+                <label>
+                    Rôle
+                    <input id="editRole" type="text"/>
+                </label>
+
+                <label>
+                    Bio
+                    <textarea id="editBio" rows="3"></textarea>
+                </label>
+
+                <div class="edit-actions">
+                    <button class="primary" id="saveBtn">Enregistrer</button>
+                    <button class="ghost" id="cancelBtn">Annuler</button>
+                </div>
+            </div>
+
+            <div class="more" id="moreSection">
+                <p id="bio">
+                    J'aime construire des interfaces simples et efficaces. Objectif : progresser en HTML/CSS/JS avec de petits projets.
+                </p>
+
+                <div class="links">
+                    <a class="chip" href="#" id="link1">Portfolio</a>
+                    <a class="chip" href="#" id="link2">GitHub</a>
+                    <a class="chip" href="#" id="link3">LinkedIn</a>
+                </div>
+            </div>
+        </div>
+        <div class="toast" id="toast">Profil mis à jour</div>
+        <script>
+            const toggleBtn = document.getElementById("toggleBtn");
+            const moreSection = document.getElementById("moreSection");
+
+            const avatar = document.getElementById("avatar");
+            const toast = document.getElementById("toast");
+
+            const nameEl = document.getElementById("name");
+            const roleEl = document.getElementById("role");
+            const bioEl = document.getElementById("bio");
+
+            const editBtn = document.getElementById("editBtn");
+            const editSection = document.getElementById("editSection");
+            const saveBtn = document.getElementById("saveBtn");
+            const cancelBtn = document.getElementById("cancelBtn");
+
+            const editFirstName = document.getElementById("editFirstName");
+            const editLastName = document.getElementById("editLastName");
+            const editRole = document.getElementById("editRole");
+            const editBio = document.getElementById("editBio");
+
+            function getInitials(firstName, lastName) {
+                const first = firstName.trim().charAt(0).toUpperCase();
+                const last = lastName.trim().charAt(0).toUpperCase();
+                return first + last;
+            }
+
+            function getProfileData(){
+                return{
+                    name: nameEl.textContent,
+                    role: roleEl.textContent,
+                    bio: bioEl.textContent
+                };
+            }
+
+            function setProfileData(data){
+                nameEl.textContent = data.name;
+                roleEl.textContent = data.role;
+                bioEl.textContent = data.bio;
+            }
+
+            function saveProfile(){
+                const data = getProfileData();
+                localStorage.setItem("profile", JSON.stringify(data));
+            }
+
+            function loadProfile(){
+                const raw = localStorage.getItem("profile");
+                if (!raw) return;
+                const data = JSON.parse(raw);
+                setProfileData(data);
+
+                const parts = data.name.split(" ");
+                const firstName = parts[0] || "";
+                const lastName = parts[1] || "";
+                avatar.textContent = getInitials(firstName, lastName);
+            }
+
+            function openEdit(){
+                const data = getProfileData();
+                const parts = data.name.split(" ");
+                editFirstName.value = parts[0] || "";
+                editLastName.value = parts[1] || "";
+                editRole.value = data.role;
+                editBio.value = data.bio;
+
+                editSection.classList.add("open");
+            }
+
+            function closeEdit(){
+                editSection.classList.remove("open");
+            }
+
+            editBtn.addEventListener("click", function(){
+                openEdit();
+            });
+
+            cancelBtn.addEventListener("click", function(){
+                closeEdit();
+            });
+
+            saveBtn.addEventListener("click", function(){
+                const firstName = editFirstName.value.trim();
+                const lastName = editLastName.value.trim();
+
+                const name = firstName + " " + lastName;
+                const role = editRole.value.trim();
+                const bio = editBio.value.trim();
+
+                if (name === "" || role === "" || bio === ""){
+                    alert("Remplis nom, rôle et bio :)");
+                    return;
+                }
+
+                setProfileData({name, role, bio});
+                avatar.textContent = getInitials(firstName, lastName);
+                saveProfile();
+                closeEdit();
+
+                if (typeof showToast === "function") showToast();
+            });
+
+            toggleBtn.addEventListener("click", function(){
+                moreSection.classList.toggle("open");
+
+                const isOpen = moreSection.classList.contains("open");
+                toggleBtn.textContent = isOpen ? "Voir moins" : "Voir plus";
+            });
+
+            function showToast(){
+                toast.classList.add("show");
+
+                setTimeout(function(){
+                    toast.classList.remove("show");
+                }, 1500);
+            }
+            
+            loadProfile();
+
+        </script>
+    </body>
+</html>
